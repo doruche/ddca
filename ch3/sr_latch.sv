@@ -5,4 +5,3 @@ module sr_latch (
     assign q = ~(r | qn);
     assign qn = ~(s | q);
 endmodule
-
