@@ -15,6 +15,8 @@ $(OUTDIR)/%.vvp: $(TBDIR)/%.sv | $(OUTDIR)
 	@echo ">>>\t Compiling $<..."
 	@$(CC) $(CFLAGS) -o $@ $<
 
+$(TBDIR)/%.vpp: %.sv
+
 $(OUTDIR):
 	@mkdir -p $(OUTDIR)
 
