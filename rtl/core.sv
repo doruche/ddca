@@ -138,6 +138,7 @@ module core (
         case (pc_src)
             PC_SRC_PC4: next_pc = cur_pc + 4;
             PC_SRC_ALU: next_pc = alu_res;
+            PC_SRC_BRA: next_pc = cur_pc + imm;
         endcase
     end
 

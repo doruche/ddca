@@ -28,6 +28,7 @@ package typepkg;
         OPCODE_BRANCH   = 7'b1100011,
         OPCODE_JALR     = 7'b1100111,
         OPCODE_JAL      = 7'b1101111,
+        OPCODE_FENCEI   = 7'b0001111,
         OPCODE_SYSTEM   = 7'b1110011
     } opcode_t;
 
@@ -48,9 +49,10 @@ package typepkg;
         REG_WB_SRC_PC4 = 2'b10 // for JAL and JALR
     } reg_wb_src_t;
 
-    typedef enum logic  {
-        PC_SRC_PC4 = 1'b0,
-        PC_SRC_ALU = 1'b1
+    typedef enum logic [1:0] {
+        PC_SRC_PC4 = 2'b00,
+        PC_SRC_ALU = 2'b01,
+        PC_SRC_BRA = 2'b10
     } pc_src_t;
 
     typedef enum logic [1:0] {

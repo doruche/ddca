@@ -170,7 +170,7 @@ module ctrl (
                     end
                 endcase
                 if (take_branch) begin
-                    pc_src = PC_SRC_ALU;
+                    pc_src = PC_SRC_BRA;
                 end else begin
                     pc_src = PC_SRC_PC4;
                 end

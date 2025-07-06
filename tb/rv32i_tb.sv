@@ -59,9 +59,11 @@ module rv32i_tb;
         clk = 0;
         rst = 1; #10; rst = 0;
 
-        repeat (40) begin
+        repeat (1600) begin
             #5 clk = ~clk;
         end
+
+        $display("final pc: %h", core_inst.cur_pc);
 
         $finish;
     end
