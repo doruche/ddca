@@ -13,7 +13,9 @@ PKGS = rtl/typepkg.svh
 TB_SRCS = $(wildcard tb/*_tb.sv)
 TB = $(patsubst tb/%.sv, tb/target/%, $(TB_SRCS))
 
-.PHONY: tb clean
+.PHONY: top tb clean
+
+top: tb/target/rv32i_tb
 
 tb: $(TB)
 
@@ -22,5 +24,6 @@ tb/target/%: tb/%.sv $(PKGS)
 	@$(CC) $(CFLAGS) -o $@ $(PKGS) $< -DBENCH
 
 clean:
+	@rm *.vcd
 	@rm -rf tb/target
 	@echo "All builds cleaned."

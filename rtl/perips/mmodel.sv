@@ -59,8 +59,10 @@ module mmodel (
     `ifdef BENCH
         initial begin
         
-        $readmemh("../../tests/custom/hex/branch.hex", mem);
+        $readmemh("tests/custom/hex/calc.hex", mem);
         
+        // $readmemh("tests/isa/rv32ui-p-imple.verilog", mem);
+
         end
     `endif
 
