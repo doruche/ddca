@@ -78,3 +78,6 @@
 - [x] `rv32ui-p-jal`
 
 - [x] `rv32ui-p-fence_i`
+
+以下是设计图。
+![design](/circ.jpg)
