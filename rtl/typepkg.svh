@@ -62,6 +62,18 @@ package typepkg;
         MEM_WRITE_WORD = 2'b11
     } mem_write_t;
 
+    typedef enum logic [1:0] {
+        NONE = 2'b00,
+        BYTE = 2'b01,
+        HALF = 2'b10,
+        WORD = 2'b11
+    } mem_width_t;
+
+    typedef struct packed {
+        mem_width_t width;
+        logic is_signed;
+    } mem_fmt_t;
+
     typedef enum logic [2:0] {
         MEM_READ_NONE = 3'b000,
         MEM_READ_BYTE = 3'b001,
@@ -137,7 +149,7 @@ package typepkg;
     localparam FUNCT7_OR = 7'b0000000;
     localparam FUNCT7_AND = 7'b0000000;
 
-    localparam INSN_NO_OP = 32'h00000013;
+    localparam INSN_NO_OP = 32'h00000013; // addi x0, x0, 0
 
 endpackage
 
