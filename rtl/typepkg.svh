@@ -75,6 +75,16 @@ package typepkg;
 
     localparam PC_RST_VAL = 32'h0000_0000;
 
+    // [BASE, END)
+    localparam ROM_BASE_ADDR = 32'h0000_0000;
+    localparam ROM_SIZE = 32'h0000_1000;
+    localparam ROM_END_ADDR = ROM_BASE_ADDR + ROM_SIZE;
+    localparam ROM_BITS = 12;
+    localparam RAM_BASE_ADDR = ROM_BASE_ADDR + ROM_SIZE;
+    localparam RAM_SIZE = 32'h0000_2000;
+    localparam RAM_END_ADDR = RAM_BASE_ADDR + RAM_SIZE;
+    localparam RAM_BITS = 13;
+
     localparam FUNCT3_LB = 3'b000;
     localparam FUNCT3_LH = 3'b001;
     localparam FUNCT3_LW = 3'b010;
@@ -126,6 +136,8 @@ package typepkg;
     localparam FUNCT7_SRA = 7'b0100000;
     localparam FUNCT7_OR = 7'b0000000;
     localparam FUNCT7_AND = 7'b0000000;
+
+    localparam INSN_NO_OP = 32'h00000013;
 
 endpackage
 

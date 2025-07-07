@@ -24,6 +24,6 @@ tb/target/%: tb/%.sv $(PKGS)
 	@$(CC) $(CFLAGS) -o $@ $(PKGS) $< -DBENCH
 
 clean:
-	@rm *.vcd
+	@rm -f *.vcd
 	@rm -rf tb/target
 	@echo "All builds cleaned."

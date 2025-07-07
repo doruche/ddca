@@ -8,7 +8,7 @@ module regfiles (
 );
     logic [31:0] mem [31:0];
 
-    always_ff @(posedge clk or posedge rst) begin
+    always_ff @(negedge clk or posedge rst) begin
         if (rst) begin
             for (int i = 0; i < 32; i++) begin
                 mem[i] <= 32'b0;
