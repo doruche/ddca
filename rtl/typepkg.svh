@@ -32,7 +32,7 @@ package typepkg;
         OPCODE_SYSTEM   = 7'b1110011
     } opcode_t;
 
-    typedef enum logic {
+    typedef enum logic  {
         ALU_SRC_A_RS1 = 1'b0,
         ALU_SRC_A_PC = 1'b1
     } alu_src_a_t;
@@ -52,6 +52,8 @@ package typepkg;
     typedef enum logic [1:0] {
         PC_SRC_PC4 = 2'b00,
         PC_SRC_ALU = 2'b01,
+        // We have to add another circuit to calculate BTA,
+        // as the ALU is already used to indicate whether the branch can be taken.
         PC_SRC_BRA = 2'b10
     } pc_src_t;
 
@@ -82,6 +84,58 @@ package typepkg;
         MEM_READ_BYTE_U = 3'b100,
         MEM_READ_HALF_U = 3'b101
     } mem_read_t;
+
+    typedef struct packed {
+        logic [31:0] pc;
+        logic [31:0] insn;
+    } if_id_reg_t;
+
+    typedef struct packed {
+        logic [31:0] pc;
+        logic [31:0] rd1;
+        logic [31:0] rd2;
+        logic [31:0] imm;
+        logic [4:0] ra1;
+        logic [4:0] ra2;
+        logic [4:0] wa3;
+        opcode_t opcode;
+        logic [2:0] funct3;
+        logic [6:0] funct7;
+
+        alu_src_a_t alu_src_a;
+        alu_src_b_t alu_src_b;
+        alu_op_t alu_op;
+        logic reg_write_en;
+        reg_wb_src_t reg_wb_src;
+        mem_write_t mem_write;
+        mem_read_t mem_read;
+        logic is_branch;
+        logic is_jump;
+    } id_ex_reg_t;
+
+    typedef struct packed {
+        logic [31:0] pc;
+        logic [31:0] alu_res; // store addr or data to write into regfile
+        logic [31:0] rd2;
+        logic [4:0] wa3;
+
+        logic reg_write_en;
+        reg_wb_src_t reg_wb_src;
+        mem_write_t mem_write;
+        mem_read_t mem_read;
+    } ex_mem_reg_t;
+
+    typedef struct packed {
+        logic [31:0] pc;
+        logic [31:0] alu_res; // store addr or data to write into regfile
+        logic [31:0] mem_rdata; // data read from memory
+        logic [4:0] wa3;
+
+        logic reg_write_en;
+        reg_wb_src_t reg_wb_src;
+        mem_write_t mem_write;
+        mem_read_t mem_read;
+    } mem_wb_reg_t;
 
     localparam BAD_VAL = 32'hdead_beef;
 
@@ -121,7 +175,7 @@ package typepkg;
     localparam FUNCT3_SLT = 3'b010;
     localparam FUNCT3_SLTU = 3'b011;
     localparam FUNCT3_XOR = 3'b100;
-    localparam FUNCT3_SRAL = 3'b101;
+    localparam FUNCT3_SRLA = 3'b101;
     localparam FUNCT3_OR = 3'b110;
     localparam FUNCT3_AND = 3'b111;
 

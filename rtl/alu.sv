@@ -27,7 +27,7 @@ module alu (
             ALU_OP_SLTU:    temp_result = operand_a < operand_b ? 1 : 0;
             ALU_OP_COPY_A:  temp_result = operand_a;
             ALU_OP_COPY_B:  temp_result = operand_b;
-            default:        temp_result = BAD_VAL;
+            default:        temp_result = 'x;
         endcase
 
         result = temp_result;
