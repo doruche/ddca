@@ -20,7 +20,8 @@ module datapath (
     output logic [4:0] id_wa3,
 
     input logic should_stall,
-    input logic should_flush,
+    input logic flush_if_id,
+    input logic flush_id_ex,
 
     input alu_src_a_t id_alu_src_a,
     input alu_src_b_t id_alu_src_b,
@@ -39,6 +40,7 @@ module datapath (
     output logic [2:0] ex_branch_funct3,
     output logic ex_is_jump,
     output logic ex_is_load,
+    output logic [4:0] ex_wa3,
     input pc_src_t ex_pc_src,
     output mem_fmt_t mem_fmt,
     output logic [31:0] mem_addr,
@@ -74,12 +76,13 @@ module datapath (
         case (ex_pc_src)
             PC_SRC_PC4: next_pc = cur_pc + 4;
             PC_SRC_ALU: next_pc = ex_alu_res;
+            PC_SRC_BRA: next_pc = id_ex_reg.pc + id_ex_reg.imm;
             default:    next_pc = 'x;
         endcase
     end
 
     always_ff @( posedge clk or posedge rst ) begin : IF_ID
-        if (rst) begin
+        if (rst || flush_if_id) begin
             if_id_reg.pc <= PC_RST_VAL;
             if_id_reg.insn <= INSN_NO_OP;
         end else if (~should_stall && clk) begin
@@ -89,7 +92,7 @@ module datapath (
     end
 
     always_ff @( posedge clk or posedge rst ) begin : ID_EX
-        if (rst || should_flush) begin
+        if (rst || flush_id_ex) begin
             id_ex_reg.reg_write_en <= 0;
             id_ex_reg.mem_read <= MEM_READ_NONE;
             id_ex_reg.mem_write <= MEM_WRITE_NONE;
@@ -137,6 +140,14 @@ module datapath (
         end
     end
 
+    // EX
+    assign ex_is_branch = id_ex_reg.is_branch;
+    assign ex_is_jump = id_ex_reg.is_jump;
+    assign ex_branch_funct3 = id_ex_reg.funct3;
+    assign ex_is_load = id_ex_reg.mem_read != MEM_READ_NONE;
+    assign ex_wa3 = id_ex_reg.wa3;
+
+
     always_ff @( posedge clk or posedge rst ) begin : MEM_WB
         if (rst) begin
             mem_wb_reg.reg_write_en <= 0;
@@ -155,20 +166,18 @@ module datapath (
         end
     end
 
-    // Forwarding
-    always @(*) begin
+    always @(*) begin : Forwarding
         // prio: MEM > WB > NONE
-        // we do not care x0 here, as the regfile implementation will ignore it
-        if ((id_ex_reg.ra1 == ex_mem_reg.wa3) && ex_mem_reg.reg_write_en)
+        if ((id_ex_reg.ra1 == ex_mem_reg.wa3) && ex_mem_reg.reg_write_en && id_ex_reg.ra1 != 0)
             ex_actual_rd1 = ex_mem_reg.alu_res;
-        else if ((id_ex_reg.ra1 == mem_wb_reg.wa3) && mem_wb_reg.reg_write_en)
+        else if ((id_ex_reg.ra1 == mem_wb_reg.wa3) && mem_wb_reg.reg_write_en && id_ex_reg.ra1 != 0)
             ex_actual_rd1 = wb_result;
         else
             ex_actual_rd1 = id_ex_reg.rd1;
 
-        if ((id_ex_reg.ra2 == ex_mem_reg.wa3) && ex_mem_reg.reg_write_en)
+        if ((id_ex_reg.ra2 == ex_mem_reg.wa3) && ex_mem_reg.reg_write_en && id_ex_reg.ra2 != 0)
             ex_actual_rd2 = ex_mem_reg.alu_res;
-        else if ((id_ex_reg.ra2 == mem_wb_reg.wa3) && mem_wb_reg.reg_write_en)
+        else if ((id_ex_reg.ra2 == mem_wb_reg.wa3) && mem_wb_reg.reg_write_en && id_ex_reg.ra2 != 0)
             ex_actual_rd2 = wb_result;
         else
             ex_actual_rd2 = id_ex_reg.rd2;
@@ -264,8 +273,8 @@ module datapath (
     regfiles u_regfiles (
         .clk(clk),
         .rst(rst),
-        .ra1(id_ex_reg.ra1),
-        .ra2(id_ex_reg.ra2),
+        .ra1(id_ra1),
+        .ra2(id_ra2),
         .wa3(mem_wb_reg.wa3),
         .we(mem_wb_reg.reg_write_en),
         .wd3(wb_result),

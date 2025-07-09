@@ -1,9 +1,4 @@
-CROSS = riscv32-unknown-elf-
-CC = $(CROSS)gcc
-OBJDUMP = $(CROSS)objdump
-OBJCOPY = $(CROSS)objcopy
-
-CFLAGS = -march=rv32i -mabi=ilp32 -O0 -Wall -nostdlib -nostartfiles -ffreestanding -fno-builtin -Tlinker.lds
+include ../Common.mk
 
 HEX_DIR = hex
 ELF_DIR = elf
@@ -26,11 +21,11 @@ all: $(ELFS) $(ROMS) $(RAMS) $(DUMPS)
 
 $(HEX_DIR)/%_rom.hex: $(BIN_DIR)/%_rom.bin
 	@mkdir -p $(HEX_DIR)
-	@python ../bin2hex.py $< $@
+	@$(BIN2HEX) $< $@
 
 $(HEX_DIR)/%_ram.hex: $(BIN_DIR)/%_ram.bin
 	@mkdir -p $(HEX_DIR)
-	@python ../bin2hex.py $< $@
+	@$(BIN2HEX) $< $@
 
 $(BIN_DIR)/%_ram.bin: $(ELF_DIR)/%.elf
 	@mkdir -p $(BIN_DIR)

@@ -4,7 +4,7 @@ import typepkg::*;
 module ramintf (
     // signals used by the processor
     input logic clk,
-    input logic re,
+    input logic re, we,
     input mem_fmt_t fmt,
     input logic [31:0] addr,
     input logic [31:0] wdata,
@@ -22,7 +22,7 @@ module ramintf (
 
     assign bus_addr = addr;
     assign bus_re = re;
-    assign bus_we = (fmt.width != NONE);
+    assign bus_we = we;
 
     // spec demands that the alignments must be multiple of the width,
     // and we should raise an exception if not.

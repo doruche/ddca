@@ -15,12 +15,7 @@ module rom (
     generate
         genvar i;
         initial begin
-            $readmemh("tests/custom/hex/calc_rom.hex", mem);
-        end
-        for (i = 0; i < 10; i++) begin
-            initial begin
-                #1 $display("ROM[%0h] = %h", i, mem[i]);
-            end
+            $readmemh(`ROM_HEX, mem);
         end
     endgenerate
     `endif

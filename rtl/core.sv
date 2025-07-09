@@ -37,6 +37,7 @@ module core (
     logic ex_is_jump;
     logic ex_is_load;
     logic [2:0] ex_branch_funct3;
+    logic [4:0] ex_wa3;
 
 
     mem_fmt_t mem_fmt;
@@ -46,7 +47,8 @@ module core (
     logic mem_re, mem_we;
 
     logic should_stall;
-    logic should_flush;
+    logic flush_if_id;
+    logic flush_id_ex;
 
     datapath u_datapath (
         .clk(clk),
@@ -60,7 +62,8 @@ module core (
         .id_ra2(id_ra2),
         .id_wa3(id_wa3),
         .should_stall(should_stall),
-        .should_flush(should_flush),
+        .flush_if_id(flush_if_id),
+        .flush_id_ex(flush_id_ex),
         .id_alu_src_a(id_alu_src_a),
         .id_alu_src_b(id_alu_src_b),
         .id_alu_op(id_alu_op),
@@ -78,6 +81,7 @@ module core (
         .ex_branch_funct3(ex_branch_funct3),
         .ex_is_jump(ex_is_jump),
         .ex_is_load(ex_is_load),
+        .ex_wa3(ex_wa3),
         .mem_fmt(mem_fmt),
         .mem_addr(mem_addr),
         .mem_wdata(mem_wdata),
@@ -108,15 +112,18 @@ module core (
         .ex_is_branch(ex_is_branch),
         .ex_is_jump(ex_is_jump),
         .ex_is_load(ex_is_load),
+        .ex_wa3(ex_wa3),
         .ex_branch_funct3(ex_branch_funct3),
         .ex_pc_src(ex_pc_src),
         .should_stall(should_stall),
-        .should_flush(should_flush)
+        .flush_if_id(flush_if_id),
+        .flush_id_ex(flush_id_ex)
     );
 
     ramintf u_ramintf (
         .clk(clk),
         .re(mem_re),
+        .we(mem_we),
         .fmt(mem_fmt),
         .addr(mem_addr),
         .wdata(mem_wdata),

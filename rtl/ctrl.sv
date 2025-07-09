@@ -25,10 +25,12 @@ module ctrl (
     input logic [2:0] ex_branch_funct3,
     input logic ex_is_jump,
     input logic ex_is_load,
+    input logic [4:0] ex_wa3,
     output pc_src_t ex_pc_src,
 
     output logic should_stall,
-    output logic should_flush
+    output logic flush_if_id,
+    output logic flush_id_ex
 );
     always_comb begin : ID
         id_alu_src_a = ALU_SRC_A_RS1;
@@ -137,56 +139,33 @@ module ctrl (
 
     always_comb begin : EX
         should_stall = 1'b0;
-        should_flush = 1'b0;
+        flush_if_id = 1'b0;
+        flush_id_ex = 1'b0;
         ex_pc_src = PC_SRC_PC4;
 
-        if (ex_is_load) begin
+        if (ex_is_load && ((ex_wa3 == id_ra1) || (ex_wa3 == id_ra2))) begin
             should_stall = 1'b1;
+            flush_id_ex = 1'b1;
         end
 
         if (ex_is_branch) begin
             case (ex_branch_funct3)
-                FUNCT3_BEQ: begin
-                    if (ex_alu_zero) begin
-                        ex_pc_src = PC_SRC_BRA;
-                        should_flush = 1'b1;
-                    end
-                end
-                FUNCT3_BNE: begin
-                    if (~ex_alu_zero) begin
-                        ex_pc_src = PC_SRC_BRA;
-                        should_flush = 1'b1;
-                    end
-                end
-                FUNCT3_BLT: begin
-                    if (ex_alu_less) begin
-                        ex_pc_src = PC_SRC_BRA;
-                        should_flush = 1'b1;
-                    end
-                end
-                FUNCT3_BGE: begin
-                    if (~ex_alu_less) begin
-                        ex_pc_src = PC_SRC_BRA;
-                        should_flush = 1'b1;
-                    end
-                end
-                FUNCT3_BLTU: begin
-                    if (ex_alu_uless) begin
-                        ex_pc_src = PC_SRC_BRA;
-                        should_flush = 1'b1;
-                    end
-                end
-                FUNCT3_BGEU: begin
-                    if (~ex_alu_uless) begin
-                        ex_pc_src = PC_SRC_BRA;
-                        should_flush = 1'b1;
-                    end
-                end
+                FUNCT3_BEQ: if (ex_alu_zero)   ex_pc_src = PC_SRC_BRA;
+                FUNCT3_BNE: if (~ex_alu_zero)   ex_pc_src = PC_SRC_BRA;
+                FUNCT3_BLT: if (ex_alu_less)    ex_pc_src = PC_SRC_BRA;
+                FUNCT3_BGE: if (~ex_alu_less)   ex_pc_src = PC_SRC_BRA;
+                FUNCT3_BLTU: if (ex_alu_uless)   ex_pc_src = PC_SRC_BRA;
+                FUNCT3_BGEU: if (~ex_alu_uless)   ex_pc_src = PC_SRC_BRA;
             endcase
         end
+
         if (ex_is_jump) begin
             ex_pc_src = PC_SRC_ALU;
-            should_flush = 1'b1;
+        end
+
+        if (ex_pc_src == PC_SRC_BRA || ex_pc_src == PC_SRC_ALU) begin
+            flush_id_ex = 1'b1;
+            flush_if_id = 1'b1;
         end
     end
 

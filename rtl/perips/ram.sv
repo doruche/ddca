@@ -24,7 +24,7 @@ module ram (
 
     `ifdef BENCH
         initial begin
-            $readmemh("tests/custom/hex/calc_ram.hex", mem);
+            $readmemh(`RAM_HEX, mem);
         end
     `endif
 
