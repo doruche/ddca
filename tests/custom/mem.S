@@ -10,14 +10,15 @@ c: .skip 1
 .section .text
 .global _start
 _start:
-    lw x1, x
-    lh x2, x
-    lb x3, x
-    lhu x4, x
-    lbu x5, x
+    li x31, 0x1000
+    lw x1, 0(x31)
+    lh x2, 0(x31)
+    lb x3, 0(x31)
+    lhu x4, 0(x31)
+    lbu x5, 0(x31)
     add x6, x4, x5
-    la x7, a
-    la x8, b
+    la x7, 0x1004
+    la x8, 0x1008
     sw x6, 0(x7)
     sh x6, 4(x7)
     sb x6, 2(x8)

@@ -19,5 +19,5 @@ if __name__ == "__main__":
     output_hex_file = sys.argv[2]
 
     bin2hex(input_bin_file, output_hex_file)
-    print(f"Converted {input_bin_file} to {output_hex_file}")
+    # print(f"Converted {input_bin_file} to {output_hex_file}")
     sys.exit(0)
