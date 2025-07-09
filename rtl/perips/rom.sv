@@ -5,9 +5,25 @@ module rom (
     input logic [ROM_BITS-3:0] addr,
     output logic [31:0] data
 );
-    logic [31:0] mem [0:2**(ROM_BITS-2)-1];
+    // logic [31:0] mem [0:2**(ROM_BITS-2)-1];
+    (* nomem2reg *)
+    logic [31:0] mem [ROM_BASE_ADDR>>2:ROM_END_ADDR>>2-1];
 
     assign data = mem[addr];
+
+    `ifdef BENCH
+    generate
+        genvar i;
+        initial begin
+            $readmemh("tests/custom/hex/calc_rom.hex", mem);
+        end
+        for (i = 0; i < 10; i++) begin
+            initial begin
+                #1 $display("ROM[%0h] = %h", i, mem[i]);
+            end
+        end
+    endgenerate
+    `endif
 endmodule
 
 module rombus (

@@ -8,7 +8,8 @@ module ram (
     input logic [3:0] wstrb,
     output logic [31:0] rdata
 );
-    logic [31:0] mem [0:2**(RAM_BITS-2)-1];
+    // logic [31:0] mem [0:2**(RAM_BITS-2)-1];
+    logic [31:0] mem [RAM_BASE_ADDR>>2:RAM_END_ADDR>>2-1];
 
     assign rdata = mem[addr];
 
@@ -23,7 +24,7 @@ module ram (
 
     `ifdef BENCH
         initial begin
-            // $readmemh("ram.hex", mem);
+            $readmemh("tests/custom/hex/calc_ram.hex", mem);
         end
     `endif
 

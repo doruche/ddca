@@ -6,3 +6,6 @@ _start:
     auipc x9, 777
     lui x4, 999
     jal x9, _start
+
+.section .data
+placeholder: .word 0xdeadbeef

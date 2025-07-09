@@ -21,5 +21,4 @@ module regfiles (
     assign rd1 = (ra1 == 0) ? 32'b0 : mem[ra1];
     assign rd2 = (ra2 == 0) ? 32'b0 : mem[ra2];
 
-
 endmodule
