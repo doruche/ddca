@@ -6,7 +6,7 @@
 
   - 本实现采用哈佛架构，这就规避了结构冒险（Structural Hazard）
   - 对于数据冒险（Data Hazard）期延迟指令通过数据前递（Forwarding）解决，双周期延迟指令（此处只有Load类型）通过插入气泡（Bubble）解决
-  - 对于控制冒险（Control Hazard），采取的办法式简单粗暴地暂时认为分支不会跳转；在`EX`阶段，如果发现分支条件是符合的，就通过插入气泡解决
+  - 对于控制冒险（Control Hazard），采取的办法是简单粗暴地暂时认为分支不会跳转；在`EX`阶段，如果发现分支条件是符合的，就通过插入气泡解决
 
 这个处理器通过了 [riscv-tests/isa/rv32ui](https://github.com/riscv-software-src/riscv-tests/tree/master/isa/rv32ui) 下所有的测试程序。
 ## 项目结构
