@@ -5,7 +5,6 @@ module rom (
     input logic [ROM_BITS-3:0] addr,
     output logic [31:0] data
 );
-    // logic [31:0] mem [0:2**(ROM_BITS-2)-1];
     (* nomem2reg *)
     logic [31:0] mem [ROM_BASE_ADDR>>2:ROM_END_ADDR>>2-1];
 

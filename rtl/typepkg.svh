@@ -137,19 +137,40 @@ package typepkg;
         mem_read_t mem_read;
     } mem_wb_reg_t;
 
-    localparam BAD_VAL = 32'hdead_beef;
+    // 4-way set associative cache
+
+    localparam CACHE_BLK_WORDS = 4;
+    localparam CACHE_BLK_BYTES = CACHE_BLK_WORDS * 4;
+    localparam CACHE_CAPACITY = 256 * 4;
+    localparam CACHE_TAG_BITS = 24;
+
+    typedef struct packed {
+        logic [31:0] data [0:CACHE_BLK_WORDS-1];
+        logic [CACHE_TAG_BITS-1:0] tag;
+        logic [1:0] lru;
+        logic valid;
+        logic dirty; // Write-back strategy
+    } dcache_blk_t;
+
+    typedef struct packed {
+        logic [31:0] insn [0:CACHE_BLK_WORDS-1];
+        logic [CACHE_TAG_BITS-1:0] tag;
+        logic [1:0] lru;
+        logic valid;
+    } icache_blk_t;
 
     localparam PC_RST_VAL = 32'h0000_0000;
 
     // [BASE, END)
-    localparam ROM_BASE_ADDR = 32'h0000_0000;
-    localparam ROM_SIZE = 32'h0000_1000;
+    localparam ROM_BASE_ADDR = 32'h8000_0000;
+    localparam ROM_SIZE = 32'h0000_2000;
     localparam ROM_END_ADDR = ROM_BASE_ADDR + ROM_SIZE;
-    localparam ROM_BITS = 12;
-    localparam RAM_BASE_ADDR = ROM_BASE_ADDR + ROM_SIZE;
-    localparam RAM_SIZE = 32'h0000_2000;
+    localparam ROM_BITS = 13;
+
+    localparam RAM_BASE_ADDR = ROM_END_ADDR;
+    localparam RAM_SIZE = 32'h0000_4000;
     localparam RAM_END_ADDR = RAM_BASE_ADDR + RAM_SIZE;
-    localparam RAM_BITS = 13;
+    localparam RAM_BITS = 14;
 
     localparam FUNCT3_LB = 3'b000;
     localparam FUNCT3_LH = 3'b001;

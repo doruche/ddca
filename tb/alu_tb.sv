@@ -246,12 +246,6 @@ module alu_tb;
         #10;
         assert (result == operand_a);
 
-        // test bad operation
-        $display("alu_tb: bad operation test");
-        alu_op = alu_op_t'(4'b1111);
-        #10;
-        assert (result == BAD_VAL);    
-
         $display("alu_tb: all tests passed");
         $finish;
     end
